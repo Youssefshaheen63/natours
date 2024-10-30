@@ -1,9 +1,20 @@
 const express = require('express');
 const tourController = require('./../controllers/tourController');
 const authController = require('../controllers/authenticationController');
+const reviewRouter = require('./../routes/reviewRoutes');
 const router = express.Router();
 
 // router.param('id', tourController.checkID);
+
+// router
+//   .route('/:tourid/reviews')
+//   .post(
+//     authController.protect,
+//     authController.restrictTo('user'),
+//     reviewController.createRewview,
+//   );
+
+router.use('/:tourid/reviews', reviewRouter);
 
 router
   .route('/top-5-cheap')
@@ -26,4 +37,5 @@ router
     tourController.deleteTour,
   );
 // Always use protect to make sure user is logged in
+
 module.exports = router;

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const Tour = require('../models/tourModel');
+const Review = require('./../../models/reviewModel');
 dotenv.config({ path: './config.env' });
 
 const DB = process.env.DATABASE.replace(
@@ -11,13 +11,11 @@ const DB = process.env.DATABASE.replace(
 mongoose.connect(DB).then((con) => console.log('DB connection Successfully'));
 
 // Read Data
-const data = JSON.parse(
-  fs.readFileSync('dev-data/data/tours-simple.json', 'utf-8'),
-);
+const data = JSON.parse(fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8'));
 
 const importData = async () => {
   try {
-    await Tour.create(data);
+    await Review.create(data);
     console.log('Dat Successfully loaded');
     process.exit();
   } catch (error) {
@@ -27,7 +25,7 @@ const importData = async () => {
 
 const deleteData = async () => {
   try {
-    await Tour.deleteMany();
+    await Review.deleteMany();
     console.log('Dat Successfully deleted');
     process.exit();
   } catch (error) {
