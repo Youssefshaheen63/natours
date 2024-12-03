@@ -58,7 +58,7 @@ const tourSchema = new mongoose.Schema(
     summary: {
       type: String,
       trim: true,
-      required: [true, 'A tour must have a description'],
+      required: [true, 'A tour must have a summary'],
     },
     description: {
       type: String,
@@ -174,7 +174,9 @@ tourSchema.pre(/^find/, function (next) {
 //   console.log(doc);
 //   next();
 // });
-
+// tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
 // Aggregation Middleware
 tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
