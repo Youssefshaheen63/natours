@@ -64,10 +64,17 @@ reviewSchema.statics.calcAverageRating = async function (tourid) {
   ]);
   console.log(stats);
 
-  await Tour.findByIdAndUpdate(tourid, {
-    ratingsQuantity: stats[0].nRating,
-    ratingsAverage: stats[0].avgRating,
-  });
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourid, {
+      ratingsQuantity: stats[0].nRating,
+      ratingsAverage: stats[0].avgRating,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourid, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5,
+    });
+  }
 };
 
 reviewSchema.post('save', function () {
@@ -76,6 +83,17 @@ reviewSchema.post('save', function () {
   this.constructor.calcAverageRating(this.tour);
   // post middleware not get access to next
 });
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  // Store the review document
+  // this.clone() creates a copy of the query before executing it, preventing the "Query already executed" error.
+  this.r = await this.clone().findOne();
+  console.log(this.r);
+  next();
+});
+reviewSchema.post(/^findOneAnd/, async function () {
+  this.r.constructor.calcAverageRating(this.r.tour);
+});
+
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = Review;
